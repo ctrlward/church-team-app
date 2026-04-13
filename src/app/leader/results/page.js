@@ -18,34 +18,34 @@ export default function LeaderResults() {
   const [selectedDate, setSelectedDate] = useState(""); 
 
   useEffect(() => {
+    const fetchData = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      // bring announcements
+      const q = query(
+        collection(db, "announcements"),
+        where("leaderId", "==", user.uid)
+      );
+
+      const snap = await getDocs(q);
+      const list = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAnnouncements(list);
+
+      // user
+      const userSnap = await getDocs(collection(db, "users"));
+      setUsers(userSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+
+      // teams
+      const teamSnap = await getDocs(collection(db, "teams"));
+      setTeams(teamSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    };
+
     fetchData();
   }, []);
-
-  const fetchData = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    // bring announcements
-    const q = query(
-      collection(db, "announcements"),
-      where("leaderId", "==", user.uid)
-    );
-
-    const snap = await getDocs(q);
-    const list = snap.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setAnnouncements(list);
-
-    // user
-    const userSnap = await getDocs(collection(db, "users"));
-    setUsers(userSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-
-    // teams
-    const teamSnap = await getDocs(collection(db, "teams"));
-    setTeams(teamSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-  };
 
   // delete announcement
   const deleteAnnouncement = async (id) => {

@@ -14,18 +14,18 @@ export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
 
-  const fetchUsers = async () => {
-    const snapshot = await getDocs(collection(db, "users"));
-
-    const list = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    setUsers(list);
-  };
-
   useEffect(() => {
+    const fetchUsers = async () => {
+      const snapshot = await getDocs(collection(db, "users"));
+
+      const list = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      setUsers(list);
+    };
+
     fetchUsers();
   }, []);
 
